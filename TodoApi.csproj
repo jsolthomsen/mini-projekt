@@ -17,4 +17,15 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Model\bin\Debug\net6.0\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="Model\bin\Debug\net6.0\appsettings.json" />
+    <_ContentIncludedByDefault Remove="Model\bin\Debug\net6.0\TodoApi.deps.json" />
+    <_ContentIncludedByDefault Remove="Model\bin\Debug\net6.0\TodoApi.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="Model\obj\Debug\net6.0\staticwebassets.build.json" />
+    <_ContentIncludedByDefault Remove="Model\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="Model\obj\project.packagespec.json" />
+    <_ContentIncludedByDefault Remove="Model\obj\TodoApi.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
 </Project>

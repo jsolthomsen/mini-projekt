@@ -18,14 +18,14 @@ builder.Services.AddCors(options =>
 });
 
 // Tilføj DbContext factory som service.
-builder.Services.AddDbContext<BookContext>(options =>
+builder.Services.AddDbContext<PostContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
 
 // Tilføj DataService så den kan bruges i endpoints
 builder.Services.AddScoped<DataService>();
 
 // Dette kode kan bruges til at fjerne "cykler" i JSON objekterne.
-/*
+
 builder.Services.Configure<JsonOptions>(options =>
 {
     // Her kan man fjerne fejl der opstår, når man returnerer JSON med objekter,
@@ -34,7 +34,7 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.ReferenceHandler = 
         System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
-*/
+
 
 var app = builder.Build();
 
@@ -62,17 +62,17 @@ app.MapGet("/", (DataService service) =>
     return new { message = "Hello World!" };
 });
 
-app.MapGet("/api/books", (DataService service) =>
+
+app.MapGet("/api/posts", (DataService service) =>
 {
-    return service.GetBooks().Select(b => new { 
-        bookId = b.BookId, 
-        title = b.Title, 
-        author = new {
-            b.Author.AuthorId, b.Author.Fullname
-        } 
+    return service.GetPosts().Select(b => new { 
+        postId = b.PostId, 
+        text = b.Text, 
+        user = b.User,
     });
 });
 
+/*
 app.MapGet("/api/authors", (DataService service) =>
 {
     return service.GetAuthors().Select(a => new { a.AuthorId, a.Fullname });
@@ -87,7 +87,7 @@ app.MapPost("/api/books", (DataService service, NewBookData data) =>
     string result = service.CreateBook(data.Titel, data.AuthorId);
     return new { message = result };
 });
-
+*/
 app.Run();
 
 record NewBookData(string Titel, int AuthorId);

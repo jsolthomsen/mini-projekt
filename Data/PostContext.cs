@@ -3,13 +3,11 @@ using Model;
 
 namespace Data
 {
-    public class BookContext : DbContext
+    public class PostContext : DbContext
     {
-        public DbSet<Book> Books => Set<Book>();
-        public DbSet<Author> Authors => Set<Author>();
-
-
-        public BookContext (DbContextOptions<BookContext> options)
+        public DbSet<Post> Posts => Set<Post>();
+        
+        public PostContext (DbContextOptions<PostContext> options)
             : base(options)
         {
             // Den her er tom. Men ": base(options)" sikre at constructor
