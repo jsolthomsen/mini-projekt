@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
 
+using Model;
 using Data;
 using Service;
 
@@ -10,16 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 var AllowSomeStuff = "_AllowSomeStuff";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: AllowSomeStuff, builder => {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
+	options.AddPolicy(name: AllowSomeStuff, builder =>
+	{
+		builder.AllowAnyOrigin()
+			   .AllowAnyHeader()
+			   .AllowAnyMethod();
+	});
 });
 
 // Tilføj DbContext factory som service.
 builder.Services.AddDbContext<PostContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
+	options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
 
 // Tilføj DataService så den kan bruges i endpoints
 builder.Services.AddScoped<DataService>();
@@ -28,11 +30,11 @@ builder.Services.AddScoped<DataService>();
 
 builder.Services.Configure<JsonOptions>(options =>
 {
-    // Her kan man fjerne fejl der opstår, når man returnerer JSON med objekter,
-    // der refererer til hinanden i en cykel.
-    // (altså dobbelrettede associeringer)
-    options.SerializerOptions.ReferenceHandler = 
-        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+	// Her kan man fjerne fejl der opstår, når man returnerer JSON med objekter,
+	// der refererer til hinanden i en cykel.
+	// (altså dobbelrettede associeringer)
+	options.SerializerOptions.ReferenceHandler =
+		System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
 
@@ -41,8 +43,8 @@ var app = builder.Build();
 // Seed data hvis nødvendigt.
 using (var scope = app.Services.CreateScope())
 {
-    var dataService = scope.ServiceProvider.GetRequiredService<DataService>();
-    dataService.SeedData(); // Fylder data på, hvis databasen er tom. Ellers ikke.
+	var dataService = scope.ServiceProvider.GetRequiredService<DataService>();
+	dataService.SeedData(); // Fylder data på, hvis databasen er tom. Ellers ikke.
 }
 
 app.UseHttpsRedirection();
@@ -51,43 +53,74 @@ app.UseCors(AllowSomeStuff);
 // Middlware der kører før hver request. Sætter ContentType for alle responses til "JSON".
 app.Use(async (context, next) =>
 {
-    context.Response.ContentType = "application/json; charset=utf-8";
-    await next(context);
+	context.Response.ContentType = "application/json; charset=utf-8";
+	await next(context);
 });
 
 
 // DataService fås via "Dependency Injection" (DI)
 app.MapGet("/", (DataService service) =>
 {
-    return new { message = "Hello World!" };
+	return new { message = "Hello World!" };
 });
 
 
 app.MapGet("/api/posts", (DataService service) =>
 {
-    return service.GetPosts().Select(b => new { 
-        postId = b.PostId, 
-        text = b.Text, 
-        user = b.User,
-    });
+	return service.GetPosts();
 });
 
-/*
-app.MapGet("/api/authors", (DataService service) =>
+app.MapGet("/api/posts/{id}", (DataService service, int id) =>
 {
-    return service.GetAuthors().Select(a => new { a.AuthorId, a.Fullname });
+	return service.GetPost(id);
 });
 
-app.MapGet("/api/authors/{id}", (DataService service, int id) => {
-    return service.GetAuthor(id);
-});
-
-app.MapPost("/api/books", (DataService service, NewBookData data) =>
+app.MapPost("/api/posts", (DataService service, Post post) =>
 {
-    string result = service.CreateBook(data.Titel, data.AuthorId);
-    return new { message = result };
+	service.CreatePost(post.User, post.Text);
+	return new { message = "Post created" };
 });
-*/
+
+app.MapPost("/api/posts/{id}/comments", (DataService service, int id, Comment comment) =>
+{
+	service.CreateComment(id, comment.Text, comment.User);
+	return new { message = "Comment created" };
+});
+
+app.MapPut("/api/posts/{id}/upvote", (DataService service, int id, Post post) =>
+{
+	Post p = service.GetPost(id);
+	p.User = post.User;
+	p.Text = post.Text;
+	return new { message = "Post updated" };
+});
+
+app.MapPut("/api/posts/{id}/downvote", (DataService service, int id, Post post) =>
+{
+	Post p = service.GetPost(id);
+	p.User = post.User;
+	p.Text = post.Text;
+	return new { message = "Post updated" };
+});
+
+app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote", (DataService service, int id, int commentId, Comment comment) =>
+{
+	Post p = service.GetPost(id);
+	Comment c = p.Comments.FirstOrDefault(c => c.CommentId == commentId);
+	c.Text = comment.Text;
+	c.User = comment.User;
+	return new { message = "Comment updated" };
+});
+
+app.MapPut("/api/posts/{id}/comments/{commentId}/Downvote", (DataService service, int id, int commentId, Comment comment) =>
+{
+	Post p = service.GetPost(id);
+	Comment c = p.Comments.FirstOrDefault(c => c.CommentId == commentId);
+	c.Text = comment.Text;
+	c.User = comment.User;
+	return new { message = "Comment updated" };
+});
+
 app.Run();
 
 record NewBookData(string Titel, int AuthorId);
