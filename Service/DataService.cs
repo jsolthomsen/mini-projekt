@@ -24,22 +24,25 @@ public class DataService
 		Post post = db.Posts.FirstOrDefault()!;
 		if (post == null)
 		{
-			db.Posts.Add(new Post { User = new User("Thomas"), Content = "This is my first post!", Upvotes = 0, Downvotes = 0 });
-			db.Posts.Add(new Post { User = new User("Henrik"), Content = "What a great website", Upvotes = 0, Downvotes = 0});
-			db.Posts.Add(new Post { User = new User("Philip"), Content = "How do I make Entity Framework make sense?", Upvotes = 0, Downvotes = 0 });
+			db.Posts.Add(new Post { User = new User("Thomas"), Content = "This is my first post!", Title = "Gonna be a good day", Upvotes = 0, Downvotes = 0 });
+			db.Posts.Add(new Post { User = new User("Henrik"), Content = "What a great website", Title = "Woohooo", Upvotes = 0, Downvotes = 0});
+			db.Posts.Add(new Post { User = new User("Philip"), Content = "How do I make Entity Framework make sense?", Title = "I hate Entity Framework :(", Upvotes = 0, Downvotes = 0 });
 		}
-
 		db.SaveChanges();
 	}
 
 
 	public List<Post> GetPosts()
 	{
-		return db.Posts.ToList();
+		return db.Posts
+			.Include(p => p.User).ToList();
 	}
 	public Post GetPost(int id)
 	{
-		return db.Posts.FirstOrDefault(p => p.Id == id);
+		return db.Posts
+			.Include(p => p.User)
+			.Include(p => p.Comments).ThenInclude(p => p.User)
+			.FirstOrDefault(p => p.Id == id);
 	}
 	public Post CreatePost(User user, string content, string title)
 	{
@@ -50,7 +53,9 @@ public class DataService
 	}
 	public Post CreateComment(int id, string content, User user)
 	{
-		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
+		Post post = db.Posts
+			.Include(p => p.Comments)
+			.FirstOrDefault(p => p.Id == id);
 		post.Comments.Add(new Comment { Content = content, User = user, Upvotes = 0, Downvotes = 0 });
 		db.SaveChanges();
 		return post;
@@ -86,25 +91,3 @@ public class DataService
 		return comment;
 	}
 }
-
-/*
-public Post GetBook(int id) {
-    return db.Books.Include(b => b.Author).FirstOrDefault(b => b.BookId == id);
-}
-
-public List<Comment> GetAuthors() {
-    return db.Posts.ToList();
-}
-
-public Comment GetAuthor(int id) {
-    return db.Posts.Include(a => a.Books).FirstOrDefault(a => a.AuthorId == id);
-}
-
-public string CreateBook(string title, int authorId) {
-    Comment comment = db.Posts.FirstOrDefault(a => a.AuthorId == authorId);
-    db.Books.Add(new Post { Title = title, Comment = comment });
-    db.SaveChanges();
-    return "Book created";
-}
-
-} */

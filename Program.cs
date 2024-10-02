@@ -89,38 +89,27 @@ app.MapPost("/api/posts/{id}/comments", (DataService service, int id, Comment co
 
 app.MapPut("/api/posts/{id}/upvote", (DataService service, int id, Post post) =>
 {
-	Post p = service.GetPost(id);
-	p.User = post.User;
-	p.Content = post.Content;
+	Post p = service.UpvotePost(id);
 	return new { message = "Post updated" };
 });
 
 app.MapPut("/api/posts/{id}/downvote", (DataService service, int id, Post post) =>
 {
-	Post p = service.GetPost(id);
-	p.User = post.User;
-	p.Content = post.Content;
+	Post p = service.DownvotePost(id);
 	return new { message = "Post updated" };
 });
 
 app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote", (DataService service, int id, int commentId, Comment comment) =>
 {
-	Post p = service.GetPost(id);
-	Comment c = p.Comments.FirstOrDefault(c => c.Id == commentId);
-	c.Content = comment.Content;
-	c.User = comment.User;
+	Comment c = service.UpvoteComment(id, commentId);
 	return new { message = "Comment updated" };
 });
 
 app.MapPut("/api/posts/{id}/comments/{commentId}/Downvote", (DataService service, int id, int commentId, Comment comment) =>
 {
-	Post p = service.GetPost(id);
-	Comment c = p.Comments.FirstOrDefault(c => c.Id == commentId);
-	c.Content = comment.Content;
-	c.User = comment.User;
+	Comment c = service.DownvoteComment(id, commentId);
 	return new { message = "Comment updated" };
 });
 
 app.Run();
 
-record NewBookData(string Titel, int AuthorId);
