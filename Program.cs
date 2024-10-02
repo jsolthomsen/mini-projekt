@@ -87,7 +87,7 @@ app.MapPost("/api/posts/{id}/comments", (DataService service, int id, Comment co
 	return new { message = "Comment created" };
 });
 
-app.MapPut("/api/posts/{id}/upvote", (DataService service, int id, Post post) =>
+app.MapPut("/api/posts/{id}/upvote/", (DataService service, int id, Post post) =>
 {
 	Post p = service.UpvotePost(id);
 	return new { message = "Post updated" };
