@@ -24,10 +24,9 @@ public class DataService
 		Post post = db.Posts.FirstOrDefault()!;
 		if (post == null)
 		{
-			db.Posts.Add(new Post { User = "Mads", Text = "This is my first post!", Date = DateTime.Now });
-			db.Posts.Add(new Post { User = "Henrik", Text = "What a great website", Date = DateTime.Today });
-			db.Posts.Add(new Post
-			{ User = "Philip", Text = "How do I make Entity Framework make sense?", Date = DateTime.Today });
+			db.Posts.Add(new Post { User = new User("Thomas"), Content = "This is my first post!", Upvotes = 0, Downvotes = 0 });
+			db.Posts.Add(new Post { User = new User("Henrik"), Content = "What a great website", Upvotes = 0, Downvotes = 0});
+			db.Posts.Add(new Post { User = new User("Philip"), Content = "How do I make Entity Framework make sense?", Upvotes = 0, Downvotes = 0 });
 		}
 
 		db.SaveChanges();
@@ -36,53 +35,53 @@ public class DataService
 
 	public List<Post> GetPosts()
 	{
-		return db.Posts.Include(b => b.Text).ToList();
+		return db.Posts.ToList();
 	}
 	public Post GetPost(int id)
 	{
-		return db.Posts.Include(b => b.Text).FirstOrDefault(b => b.PostId == id);
+		return db.Posts.FirstOrDefault(p => p.Id == id);
 	}
-	public Post CreatePost(string user, string text)
+	public Post CreatePost(User user, string content, string title)
 	{
-		Post post = new Post { User = user, Text = text, Date = DateTime.Now };
+		Post post = new Post { User = user, Content = content, Title = title, Upvotes = 0, Downvotes = 0 };
 		db.Posts.Add(post);
 		db.SaveChanges();
 		return post;
 	}
-	public Post CreateComment(int id, string text, string user)
+	public Post CreateComment(int id, string content, User user)
 	{
-		Post post = db.Posts.Include(b => b.Comments).FirstOrDefault(b => b.PostId == id);
-		post.Comments.Add(new Comment { Text = text, User = user, Date = DateTime.Now });
+		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
+		post.Comments.Add(new Comment { Content = content, User = user, Upvotes = 0, Downvotes = 0 });
 		db.SaveChanges();
 		return post;
 	}
 	public Post UpvotePost(int id)
 	{
-		Post post = db.Posts.FirstOrDefault(b => b.PostId == id);
-		post.Votes++;
+		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
+		post.Upvotes++;
 		db.SaveChanges();
 		return post;
 	}
 	public Post DownvotePost(int id)
 	{
-		Post post = db.Posts.FirstOrDefault(b => b.PostId == id);
-		post.Votes--;
+		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
+		post.Downvotes++;
 		db.SaveChanges();
 		return post;
 	}
 	public Comment UpvoteComment(int id, int commentId)
 	{
-		Post post = db.Posts.Include(b => b.Comments).FirstOrDefault(b => b.PostId == id);
-		Comment comment = post.Comments.FirstOrDefault(c => c.CommentId == commentId);
-		comment.Votes++;
+		Post post = db.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+		Comment comment = post.Comments.FirstOrDefault(c => c.Id == commentId);
+		comment.Upvotes++;
 		db.SaveChanges();
 		return comment;
 	}
 	public Comment DownvoteComment(int id, int commentId)
 	{
-		Post post = db.Posts.Include(b => b.Comments).FirstOrDefault(b => b.PostId == id);
-		Comment comment = post.Comments.FirstOrDefault(c => c.CommentId == commentId);
-		comment.Votes--;
+		Post post = db.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+		Comment comment = post.Comments.FirstOrDefault(c => c.Id == commentId);
+		comment.Downvotes++;
 		db.SaveChanges();
 		return comment;
 	}
