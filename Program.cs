@@ -77,13 +77,13 @@ app.MapGet("/api/posts/{id}", (DataService service, int id) =>
 
 app.MapPost("/api/posts", (DataService service, Post post) =>
 {
-	service.CreatePost(post.User, post.Text);
+	service.CreatePost(post.User, post.Content, post.Title);
 	return new { message = "Post created" };
 });
 
 app.MapPost("/api/posts/{id}/comments", (DataService service, int id, Comment comment) =>
 {
-	service.CreateComment(id, comment.Text, comment.User);
+	service.CreateComment(id, comment.Content, comment.User);
 	return new { message = "Comment created" };
 });
 
@@ -91,7 +91,7 @@ app.MapPut("/api/posts/{id}/upvote", (DataService service, int id, Post post) =>
 {
 	Post p = service.GetPost(id);
 	p.User = post.User;
-	p.Text = post.Text;
+	p.Content = post.Content;
 	return new { message = "Post updated" };
 });
 
@@ -99,15 +99,15 @@ app.MapPut("/api/posts/{id}/downvote", (DataService service, int id, Post post) 
 {
 	Post p = service.GetPost(id);
 	p.User = post.User;
-	p.Text = post.Text;
+	p.Content = post.Content;
 	return new { message = "Post updated" };
 });
 
 app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote", (DataService service, int id, int commentId, Comment comment) =>
 {
 	Post p = service.GetPost(id);
-	Comment c = p.Comments.FirstOrDefault(c => c.CommentId == commentId);
-	c.Text = comment.Text;
+	Comment c = p.Comments.FirstOrDefault(c => c.Id == commentId);
+	c.Content = comment.Content;
 	c.User = comment.User;
 	return new { message = "Comment updated" };
 });
@@ -115,8 +115,8 @@ app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote", (DataService service, 
 app.MapPut("/api/posts/{id}/comments/{commentId}/Downvote", (DataService service, int id, int commentId, Comment comment) =>
 {
 	Post p = service.GetPost(id);
-	Comment c = p.Comments.FirstOrDefault(c => c.CommentId == commentId);
-	c.Text = comment.Text;
+	Comment c = p.Comments.FirstOrDefault(c => c.Id == commentId);
+	c.Content = comment.Content;
 	c.User = comment.User;
 	return new { message = "Comment updated" };
 });

@@ -1,15 +1,37 @@
-namespace Model
-{
+namespace Model;
+
 	public class Post
 	{
-		public long PostId { get; set; }
+		public int Id { get; set; }
+		public string Title { get; set; }
+		public string Content { get; set; }
+		public int Upvotes { get; set; }
+		public int Downvotes { get; set; }
+		public User User { get; set; }
+		public List<Comment> Comments { get; set; } = new List<Comment>();
 
-		public DateTime Date { get; set; }
+		public Post(User user, string title = "", string content = "", int upvotes = 0, int downvotes = 0)
+		{
+			Title = title;
+			Content = content;
+			Upvotes = upvotes;
+			Downvotes = downvotes;
+			User = user;
+		}
 
-		public string Text { get; set; }
+		public Post()
+		{
+			Id = 0;
+			Title = "";
+			Content = "";
+			Upvotes = 0;
+			Downvotes = 0;
+			User = null;
+		}
 
-		public string User { get; set; }
-		public int Votes { get; set; } = 0;
-		public List<Comment> Comments { get; set; }
+		public override string ToString()
+		{
+			return
+				$"Id: {Id}, Title: {Title}, Content: {Content}, Upvotes: {Upvotes}, Downvotes: {Downvotes}, User: {User}";
+		}
 	}
-}
