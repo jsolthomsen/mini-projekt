@@ -26,8 +26,7 @@ public class DataService
 		{
 			db.Posts.Add(new Post { User = "Mads", Text = "This is my first post!", Date = DateTime.Now });
 			db.Posts.Add(new Post { User = "Henrik", Text = "What a great website", Date = DateTime.Today });
-			db.Posts.Add(new Post
-			{ User = "Philip", Text = "How do I make Entity Framework make sense?", Date = DateTime.Today });
+			db.Posts.Add(new Post { User = "Philip", Text = "How do I make Entity Framework make sense?", Date = DateTime.Today });
 		}
 
 		db.SaveChanges();
