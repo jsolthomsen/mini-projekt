@@ -3,5 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kreddit-blazor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../kreddit/kreddit-blazor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../kreddit/new kreddit/kreddit-blazor" vcs="Git" />
   </component>
 </project>

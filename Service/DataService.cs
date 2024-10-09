@@ -72,6 +72,7 @@ public class DataService
 		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
 		post.Downvotes++;
 		db.SaveChanges();
+		Console.WriteLine("Test that downvote goes through");
 		return post;
 	}
 	public Comment UpvoteComment(int id, int commentId)
