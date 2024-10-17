@@ -82,23 +82,19 @@ app.MapPost("/api/posts", (DataService service, Post post) =>
 });
 
 app.MapPost("/api/posts/{id}/comments", (DataService service, int id, Comment comment) =>
-{
-	service.CreateComment(id, comment.Content, comment.User);
-	return new { message = "Comment created" };
-});
+	service.CreateComment(id, comment.Content));
 
 app.MapPut("/api/posts/{id}/upvote/", (DataService service, int id) => 
 	service.UpvotePost(id));
 
-app.MapPut("/api/posts/{id}/downvote/", (DataService service, int id) => 
+app.MapPut("/api/posts/{id}/downvote", (DataService service, int id) => 
 	service.DownvotePost(id));
 
-app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote/", (DataService service, int id, int commentId) =>
+app.MapPut("/api/posts/{id}/comments/{commentId}/Upvote", (DataService service, int id, int commentId) =>
 	service.UpvoteComment(id, commentId));
 
 
-app.MapPut("/api/posts/{id}/comments/{commentId}/Downvote/", (DataService service, int id, int commentId) =>
+app.MapPut("/api/posts/{id}/comments/{commentId}/Downvote", (DataService service, int id, int commentId) =>
 	service.DownvoteComment(id, commentId));;
 
 app.Run();
-

@@ -51,12 +51,12 @@ public class DataService
 		db.SaveChanges();
 		return post;
 	}
-	public Post CreateComment(int id, string content, User user)
+	public Post CreateComment(int id, string content)
 	{
 		Post post = db.Posts
 			.Include(p => p.Comments)
 			.FirstOrDefault(p => p.Id == id);
-		post.Comments.Add(new Comment { Content = content, User = user, Upvotes = 0, Downvotes = 0 });
+		post.Comments.Add(new Comment { Content = content, Upvotes = 0, Downvotes = 0 });
 		db.SaveChanges();
 		return post;
 	}
@@ -72,7 +72,6 @@ public class DataService
 		Post post = db.Posts.FirstOrDefault(p => p.Id == id);
 		post.Downvotes++;
 		db.SaveChanges();
-		Console.WriteLine("Test that downvote goes through");
 		return post;
 	}
 	public Comment UpvoteComment(int id, int commentId)
